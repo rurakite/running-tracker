@@ -1,5 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from datetime import datetime
 
 
 SCOPE = [
@@ -13,7 +14,38 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("running_tracker")
 
-log = SHEET.worksheet("log")
-data = log.get_all_values()
 
-print(data)
+def get_user_data():
+    while True:
+        print("Please enter data of your run.")
+        print("Date of your run (dd/mm/yyyy).")
+        print("Your weight in kg.")
+        print("Distance in km.")
+        print("Time spent in minutes.")
+        print("All data must be separated by commas.")
+        print("Example: 23/03/23,80,4.5,58")
+
+        data_str = input("Enter your data here:\n")
+        data = data_str.split(",")
+        if validate_data(data):
+            print("Data is valid!")
+            break
+    return data
+
+
+def validate_data(data):
+    try:
+        date = datetime.strptime(data[0], '%d/%m/%Y')
+        weight = float(data[1])
+        distance = float(data[2])
+        time = float(data[3])
+        if weight <= 0 or distance <= 0 or time <= 0:
+            raise ValueError
+        print(data, weight, distance, time)
+        return (date, weight, distance, time)
+    except (ValueError, IndexError):
+        print('Invalid input data.')
+        return None
+
+
+get_user_data()
