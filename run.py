@@ -1,6 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
-from datetime import datetime
+import datetime
 
 
 SCOPE = [
@@ -15,40 +15,91 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("running_tracker")
 
 
-def get_user_data():
+def get_valid_date():
     while True:
-        print("Please enter data of your run.")
-        print("Date of your run (dd/mm/yyyy).")
-        print("Your weight in kg.")
-        print("Distance in km.")
-        print("Time spent in minutes.")
-        print("All data must be separated by commas.")
-        print("Example: 23/03/23,80,4.5,58")
-
-        data_str = input("Enter your data here:\n")
-        data = data_str.split(",")
-        if validate_data(data):
-            print("Data is valid!")
-            break
-    return data
+        date_str = input("Enter the date of your run (DD-MM-YYYY): ")
+        try:
+            datetime.datetime.strptime(date_str, "%d-%m-%Y")
+            return date_str
+        except ValueError:
+            print("Invalid date format. Please enter in DD-MM-YYYY format.")
 
 
-def validate_data(data):
-    try:
-        date = datetime.strptime(data[0], '%d/%m/%Y')
-    except ValueError:
-        print("Incorrect data format, should be MM/DD/YYYY")
-    try:
-        weight = float(data[1])
-        distance = float(data[2])
-        time = float(data[3])
-        if weight <= 0 or distance <= 0 or time <= 0:
-            raise ValueError
-        
-        return (date, weight, distance, time)
-    except (ValueError, IndexError):
-        print('Invalid input data! Please try again.\n')
-        return None
+def get_valid_weight():
+    while True:
+        weight_str = input("Enter your weight in kg: ")
+        try:
+            weight = float(weight_str)
+            if weight > 0:
+                return weight
+            else:
+                print("Weight must be greater than zero.")
+        except ValueError:
+            print("Invalid data. Please enter a number.")
 
 
-get_user_data()
+def get_valid_time():
+    while True:
+        time_str = input("Enter time of your run in minutes: ")
+        try:
+            time = float(time_str)
+            if time > 0:
+                return time
+            else:
+                print("Time must be greater than zero.")
+        except ValueError:
+            print("Invalid data. Please enter a number.")
+
+
+def get_valid_distance():
+    while True:
+        distance_str = input("Enter the distance you done in km: ")
+        try:
+            distance = float(distance_str)
+            if distance > 0:
+                return distance
+            else:
+                print("Distance must be greater than zero.")
+        except ValueError:
+            print("Invalid data. Please enter a number.")
+
+
+def calculate_avg_speed(distance, time):
+    speed = round(distance / (time / 60), 2)
+    return speed
+
+
+def calculate_pace(distance, time):
+    pace = round(time / distance, 2)
+    return pace
+
+
+def calculate_burned_calories(weight, distance):
+    return round(distance * weight * 0.75)
+
+
+def update_worksheet(data):
+    log = SHEET.worksheet("log")
+    log.append_row(data)
+    print("Your Running Tracker updated successfully !")
+
+
+def main():
+    date = get_valid_date()
+    weight = get_valid_weight()
+    time = get_valid_time()
+    distance = get_valid_distance()
+    print("Calculating your stata...")
+    pace = calculate_pace(distance, time)
+    print(f"Your pace is {pace} m/km.")
+    speed = calculate_avg_speed(distance, time)
+    print(f"Your average speed  is {speed} km/h.")
+    burned_calories = calculate_burned_calories(weight, distance)
+    print(f"You have burned {burned_calories} calories.")
+    run_data = [date, distance, time, pace, speed, burned_calories]
+    update_worksheet(run_data)
+    print(run_data)
+
+
+print("Welcome to Running Training Tracker!")
+main()
