@@ -36,15 +36,18 @@ def get_user_data():
 def validate_data(data):
     try:
         date = datetime.strptime(data[0], '%d/%m/%Y')
+    except ValueError:
+        print("Incorrect data format, should be MM/DD/YYYY")
+    try:
         weight = float(data[1])
         distance = float(data[2])
         time = float(data[3])
         if weight <= 0 or distance <= 0 or time <= 0:
             raise ValueError
-        print(data, weight, distance, time)
+        
         return (date, weight, distance, time)
     except (ValueError, IndexError):
-        print('Invalid input data.')
+        print('Invalid input data! Please try again.\n')
         return None
 
 
