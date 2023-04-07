@@ -2,12 +2,11 @@ import gspread
 from google.oauth2.service_account import Credentials
 import datetime
 
-
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
-    ]
+]
 
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
@@ -16,6 +15,7 @@ SHEET = GSPREAD_CLIENT.open("running_tracker")
 
 
 def get_valid_date():
+    """Get and validate date from user input"""
     while True:
         date_str = input("Enter the date of your run (DD-MM-YYYY): ")
         try:
@@ -26,6 +26,7 @@ def get_valid_date():
 
 
 def get_valid_weight():
+    """Get and validate weight from user input"""
     while True:
         weight_str = input("Enter your weight in kg: ")
         try:
@@ -39,6 +40,7 @@ def get_valid_weight():
 
 
 def get_valid_time():
+    """Get and validate time from user input"""
     while True:
         time_str = input("Enter time of your run in minutes: ")
         try:
@@ -52,6 +54,7 @@ def get_valid_time():
 
 
 def get_valid_distance():
+    """Get and validate distance from user input"""
     while True:
         distance_str = input("Enter the distance you done in km: ")
         try:
@@ -65,16 +68,19 @@ def get_valid_distance():
 
 
 def calculate_avg_speed(distance, time):
+    """Calculate average speed"""
     speed = round(distance / (time / 60), 2)
     return speed
 
 
 def calculate_pace(distance, time):
+    """Calculate average pace"""
     pace = round(time / distance, 2)
     return pace
 
 
 def calculate_burned_calories(weight, distance):
+    """Calculate burned calories"""
     return round(distance * weight * 0.75)
 
 
@@ -85,6 +91,7 @@ def update_worksheet(data):
 
 
 def main():
+    """Run all program functions"""
     date = get_valid_date()
     weight = get_valid_weight()
     time = get_valid_time()
@@ -98,7 +105,6 @@ def main():
     print(f"You have burned {burned_calories} calories.")
     run_data = [date, distance, time, pace, speed, burned_calories]
     update_worksheet(run_data)
-    print(run_data)
 
 
 print("Welcome to Running Training Tracker!")
