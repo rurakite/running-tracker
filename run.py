@@ -17,7 +17,7 @@ SHEET = GSPREAD_CLIENT.open("running_tracker")
 def get_valid_date():
     """Get and validate date from user input"""
     while True:
-        date_str = input("Enter the date of your run (DD-MM-YYYY): ")
+        date_str = input("Enter the date of your run (DD-MM-YYYY):\n")
         try:
             datetime.datetime.strptime(date_str, "%d-%m-%Y")
             return date_str
@@ -28,7 +28,7 @@ def get_valid_date():
 def get_valid_weight():
     """Get and validate weight from user input"""
     while True:
-        weight_str = input("Enter your weight in kg: ")
+        weight_str = input("Enter your weight in kg:\n")
         try:
             weight = float(weight_str)
             if weight > 0:
@@ -42,7 +42,7 @@ def get_valid_weight():
 def get_valid_time():
     """Get and validate time from user input"""
     while True:
-        time_str = input("Enter time of your run in minutes: ")
+        time_str = input("Enter time of your run in minutes:\n")
         try:
             time = float(time_str)
             if time > 0:
@@ -56,7 +56,7 @@ def get_valid_time():
 def get_valid_distance():
     """Get and validate distance from user input"""
     while True:
-        distance_str = input("Enter the distance you done in km: ")
+        distance_str = input("Enter the distance you done in km:\n")
         try:
             distance = float(distance_str)
             if distance > 0:
@@ -87,7 +87,7 @@ def calculate_burned_calories(weight, distance):
 def update_worksheet(data):
     log = SHEET.worksheet("log")
     log.append_row(data)
-    print("Your Running Tracker updated successfully !")
+    print("Your Running Tracker updated successfully!")
 
 
 def main():
